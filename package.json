@@ -8,7 +8,8 @@
   "private": true,
   "scripts": {
     "build": "webpack",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "task:publish": "yarn build && gh-pages -d dist"
   },
   "dependencies": {
     "eslint": "^6.1.0",
@@ -17,6 +18,8 @@
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
+    "gh-pages": "^2.0.1",
+    "tone": "^13.4.9",
     "webpack": "^4.36.1",
     "webpack-cli": "^3.3.6"
   }

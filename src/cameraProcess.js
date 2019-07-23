@@ -1,7 +1,7 @@
 
 import { getIndex, getColor } from './imageData'
 import { checkParams } from './utils'
-import { xy2d } from './hilbert';
+import { xy2d } from './hilbert'
 /*
   cfg should contain:
     inputSize
