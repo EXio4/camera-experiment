@@ -1,7 +1,7 @@
 
 import hilbert from './hilbert'
-
-const arr = []
+import { createLowResMap } from './cameraProcess'
+import { getIndex } from './imageData'
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 let _nextCbs = []
@@ -32,7 +32,7 @@ window.addEventListener('DOMContentLoaded', function () {
   const video = document.getElementById('video')
   const mediaConfig = { video: true }
   const errBack = function (e) {
-            	console.log('An error has occurred!', e)
+    console.log('An error has occurred!', e)
   }
 
   // Put video listeners into place
@@ -60,10 +60,6 @@ window.addEventListener('DOMContentLoaded', function () {
       video.src = window.URL.createObjectURL(stream)
       video.play()
     }, errBack)
-  }
-
-  const getIndex = (x, y, width) => {
-    return y * (width * 4) + x * 4
   }
 
   function beep (frequency, strength) {
@@ -107,31 +103,14 @@ window.addEventListener('DOMContentLoaded', function () {
     const outputImageData = resultContext.createImageData(inputImageData)
     const linearImageData = resultContext.createImageData(256, 64)
 
-    const getColor = (x, y) => {
-      const ix = getIndex(x, y, 480)
-      return (
-        inputImageData.data[ix + 0] * 0.3 +
-                        inputImageData.data[ix + 1] * 0.59 +
-                        inputImageData.data[ix + 2] * 0.11
-      )
-    }
 
-    const weirdOutput = []
-    for (let _x = 0; _x < 16; _x++) {
-      for (let _y = 0; _y < 16; _y++) {
-        let res = 0
-        for (let _xd = 0; _xd < 30; _xd++) {
-          for (let _yd = 0; _yd < 30; _yd++) {
-            res += getColor(_x * 30 + _xd, _y * 30 + _yd)
-          }
-        }
-        res /= (16 * 16)
-
-        weirdOutput[hilbert.xy2d(_x, _y, 4)] = res
-      }
-    }
-
-    const { min, max } = stats(weirdOutput)
+    const weirdOutput = createLowResMap(inputImageData, outputImageData, {
+      inputSize: 480,
+      outputSize: 480,
+      outputResolution: 16
+    })
+  
+    const { min, max } = stats(weirdOutput.data)
     /*
                     this function will normalize to a 0-255 range, but it'll try to preserve "quietness" to avoid overblowing darkness
                 */
@@ -144,9 +123,8 @@ window.addEventListener('DOMContentLoaded', function () {
       if (r <= 0) return 0
       return r
     }
-    const weirdOutputNormalized = weirdOutput.map(normalizeMinMax)
+    const weirdOutputNormalized = weirdOutput.data.map(normalizeMinMax)
     const { avg } = stats(weirdOutputNormalized)
-    console.log({ min, max, avg })
 
     const normalizeByAvg = (v) => {
       const r = (255 - avg) * Math.abs(v - avg) / avg
@@ -160,20 +138,18 @@ window.addEventListener('DOMContentLoaded', function () {
     }
 
     for (let _d = 0; _d < 256; _d++) {
-      for (let _y = 0; _y < 16; _y++) {
-        const pair = hilbert.d2xy(4, _d)
-        const _x = pair[0]
-        const _y = pair[1]
-        const res = normalize(weirdOutputNormalized[_d])
+      const pair = hilbert.d2xy(4, _d)
+      const _x = pair[0]
+      const _y = pair[1]
+      const res = normalize(weirdOutputNormalized[_d])
 
-        for (let _xd = 0; _xd < 30; _xd++) {
-          for (let _yd = 0; _yd < 30; _yd++) {
-            const ix = getIndex(_x * 30 + _xd, _y * 30 + _yd, 480)
-            outputImageData.data[ix + 0] = res
-            outputImageData.data[ix + 1] = res
-            outputImageData.data[ix + 2] = res
-            outputImageData.data[ix + 3] = inputImageData.data[ix + 3]
-          }
+      for (let _xd = 0; _xd < 30; _xd++) {
+        for (let _yd = 0; _yd < 30; _yd++) {
+          const ix = getIndex(_x * 30 + _xd, _y * 30 + _yd, 480)
+          outputImageData.data[ix + 0] = res
+          outputImageData.data[ix + 1] = res
+          outputImageData.data[ix + 2] = res
+          outputImageData.data[ix + 3] = inputImageData.data[ix + 3]
         }
       }
     }
