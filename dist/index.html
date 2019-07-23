@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+ <head>
+   <title>Getting Started</title>
+ </head>
+ <body>
+    <div class="mainApp">
+        <div class="tile">
+            <div class="tile-title">
+                Canvas Camera
+            </div>
+            <canvas id="canvas" width="640" height="480"></canvas>
+        </div>
+        <div class="tile">
+            <div class="tile-title">
+                    Graphical Output
+            </div>
+            <canvas id="output" width="480" height="480"></canvas>
+            <canvas id="outputLinear" width="256" height="64"></canvas>
+        </div>
+        <div class="tile">
+            <div class="tile-title">
+                    Raw Camera
+
+            </div>
+            <video id="video" width="640" height="480" autoplay=""></video>
+        </div>
+        <div class="tile">
+            <div class="tile-title">
+                    Raw Canvas
+            </div>  
+            <canvas id="rawcanvas" width="640" height="480"></canvas>
+        </div>
+    </div>
+    <style>
+        .mainApp {
+            width: 100vw;
+        }
+        .tile-title {
+            font-size: 32px;
+        }
+        .tile {
+            display: inline-block;
+        }
+    </style>
+	<script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "camera-experiment",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "repository": "git@github.com:EXio4/camera-experiment.git",
+  "author": "exio4 <me@exio4.xyz>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "webpack",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6"
+  }
+}
